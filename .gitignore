@@ -3,3 +3,6 @@ _site
 .jekyll-cache
 .jekyll-metadata
 vendor
+
+# Local AI work artifacts (plans, handovers, session notes) — never tracked
+.ai-work/
