@@ -35,6 +35,18 @@ If a comparison cannot survive those rules, it is marketing, not a comparison.
 
 The [canonical matrix](https://cratis.io/compare-event-sourcing-dotnet/) pins the exact versions — KurrentDB server 26.0, Marten 9.30.0, Chronicle 17.0.0 — and cites every row.
 
+## You're choosing an ecosystem, not only a database
+
+Here is the part most comparisons skip: none of these tools lives alone. The event store is the center of a decision, but rarely the whole of it — around every store sits the layer you build applications with, the tooling you operate with, and the path events take to the rest of your architecture. Comparing the stores cell by cell and stopping there would miss where much of your time actually goes.
+
+So the [canonical matrix](https://cratis.io/compare-event-sourcing-dotnet/) now carries an ecosystem section, compiled under the same rules — every cell restates the vendor's own listing, with retrieval dates, and crowns nobody:
+
+- **KurrentDB** documents a server-side Connectors subsystem — pre-installed and enabled by default — that runs catch-up subscriptions and pushes filtered or transformed events to external systems through sinks, with a documented catalog covering Elasticsearch, HTTP, Kafka, MongoDB, RabbitMQ, and Serilog.
+- **Marten** is one member of JasperFx's [Critter Stack](https://jasperfx.net), described by its maintainers as one family of .NET tools for event sourcing, document storage, and messaging: Wolverine for messaging, Polecat, Fisher, Weasel, Alba, and CritterWatch alongside Marten itself.
+- **Cratis Chronicle** is part of the Cratis ecosystem: [Arc](https://cratis.io/arc/) for CQRS with generated TypeScript proxies, [Components](https://cratis.io/components/) for React, the [CLI](https://cratis.io/cli/) and the Web Workbench for operating the store, released clients for .NET, TypeScript, JVM, and Elixir, and free [AI skills, rules, and diagnostics](https://cratis.io/ai/) that teach an assistant the platform's conventions.
+
+None of this makes any tool better. It changes what you are evaluating. If you pick a store, you are also picking — or committing to build — everything around it: ask what surrounds each candidate, who maintains it, and how much of it you would otherwise write yourself. The ecosystem rows on the comparison page carry citations and retrieval dates so you can verify each listing the same way you verify a storage row.
+
 ## How to actually choose
 
 The matrix deliberately does not crown a winner. Instead, ask fit questions:
