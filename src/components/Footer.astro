@@ -1,0 +1,59 @@
+---
+// Override of Starlight's <Footer> that appends a personal author signature
+// block to every blog post, so posts carry each author's own voice.
+//
+// Author data (including the signature text) lives in src/data/authors.mjs —
+// the same source that feeds starlight-blog's bylines and author pages.
+import Default from '@astrojs/starlight/components/Footer.astro';
+import { authors } from '../data/authors.mjs';
+
+type SignatureAuthor = {
+    name: string;
+    title?: string;
+    url?: string;
+    picture?: string;
+    signature?: string;
+};
+
+const { id, entry } = Astro.locals.starlightRoute;
+
+// Only individual posts (docs entries under blog/) get a signature — the
+// generated index, tag, and author archive pages do not.
+const isBlogPost = id.startsWith('blog/') && id !== 'blog';
+
+const frontmatterAuthors = (entry.data as { authors?: unknown }).authors;
+const rawAuthors = frontmatterAuthors
+    ? Array.isArray(frontmatterAuthors)
+        ? frontmatterAuthors
+        : [frontmatterAuthors]
+    : [];
+
+const signatureAuthors: SignatureAuthor[] = rawAuthors
+    .map((author): SignatureAuthor | undefined => {
+        if (typeof author === 'string') return authors[author as keyof typeof authors];
+        if (author && typeof author === 'object' && 'name' in author) return author as SignatureAuthor;
+        return undefined;
+    })
+    .filter((author): author is SignatureAuthor => author !== undefined);
+---
+
+{
+    isBlogPost && signatureAuthors.length > 0 && (
+        <aside class="not-content" aria-label="About the author">
+            {signatureAuthors.map((author) => (
+                <div class="cratis-signature">
+                    {author.picture && <img src={author.picture} alt="" width="52" height="52" loading="lazy" />}
+                    <div>
+                        <p class="signature-name">
+                            {author.url ? <a href={author.url}>{author.name}</a> : author.name}
+                        </p>
+                        {author.title && <p class="signature-title">{author.title}</p>}
+                        {author.signature && <p class="signature-text">{author.signature}</p>}
+                    </div>
+                </div>
+            ))}
+        </aside>
+    )
+}
+
+<Default><slot /></Default>
