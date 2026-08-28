@@ -1,0 +1,33 @@
+---
+// The topics index at /topics/ — starlight-blog only generates per-tag
+// archive pages (/blog/tags/[tag]), so this page provides the catalogue the
+// masthead "Topics" link points at. It lives outside the /blog prefix because
+// starlight-blog's route middleware treats every unknown /blog/* path as a
+// post slug (and fails the build); /blog/tags redirects here instead.
+// Styled like the blog landing: the same hero treatment, then topic pills.
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+
+import Topics from '../../components/Topics.astro';
+---
+
+<StarlightPage frontmatter={{ title: 'Topics', pagefind: false, prev: false, next: false }}>
+    <div class="cratis-landing cratis-topics-page not-content">
+        <header class="cratis-hero">
+            <h1>Topics</h1>
+            <p>Everything the blog covers, one pill per topic — pick one to browse its posts.</p>
+        </header>
+        <Topics />
+    </div>
+</StarlightPage>
+
+<style>
+    /* Same technique as starlight-blog's own routes: the hero above is the
+       visible heading, so hide the default page-title panel. */
+    :global(.content-panel:first-of-type) {
+        display: none;
+    }
+
+    :global(.content-panel:nth-of-type(2)) {
+        border-top: none;
+    }
+</style>

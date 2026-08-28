@@ -1,0 +1,48 @@
+---
+// Topics catalogue: every tag used across published posts, rendered as a
+// branded pill with its post count, linking to starlight-blog's per-tag
+// archive page. Tag data is collected from the posts collection at build time
+// via starlight-blog's route data. Styles live in src/styles/cratis.css so
+// the pills stay visually in sync with the tag pills on cards and posts.
+interface Props {
+    /** Optional element id, used as an in-page anchor target. */
+    id?: string;
+}
+
+const { id } = Astro.props;
+
+const posts = Astro.locals.starlightBlog.posts.filter((post) => !post.draft);
+
+const topics = new Map<string, { label: string; href: string; count: number }>();
+for (const post of posts) {
+    for (const tag of post.tags) {
+        const existing = topics.get(tag.href);
+        if (existing) {
+            existing.count += 1;
+        } else {
+            topics.set(tag.href, { label: tag.label, href: tag.href, count: 1 });
+        }
+    }
+}
+
+// Most-used topics first, ties alphabetical — same ordering starlight-blog
+// uses for its own tag listings.
+const sorted = [...topics.values()].sort((a, b) => b.count - a.count || a.label.localeCompare(b.label));
+---
+
+{
+    sorted.length > 0 && (
+        <nav class="cratis-topics" aria-label="Topics" {id}>
+            <ul>
+                {sorted.map((topic) => (
+                    <li>
+                        <a href={topic.href}>
+                            {topic.label}
+                            <span class="count">{topic.count}</span>
+                        </a>
+                    </li>
+                ))}
+            </ul>
+        </nav>
+    )
+}

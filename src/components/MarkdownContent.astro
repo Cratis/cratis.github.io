@@ -13,6 +13,7 @@
 import BlogMarkdownContent from 'starlight-blog/overrides/MarkdownContent.astro';
 
 import PostCard from './PostCard.astro';
+import Topics from './Topics.astro';
 
 const { id } = Astro.locals.starlightRoute;
 const isBlogIndex = id === 'blog' || /^blog\/\d+$/.test(id);
@@ -28,6 +29,7 @@ const posts = isBlogIndex ? Astro.locals.starlightBlog.posts.filter((post) => !p
                     Essays and engineering notes on event sourcing, CQRS, and building the open-source Cratis stack.
                 </p>
             </header>
+            <Topics id="topics" />
             <div class="cratis-post-list">
                 {posts.map((post) => (
                     <PostCard {post} />
