@@ -1,0 +1,63 @@
+---
+// One large editorial card on the blog landing: meta row (date, reading
+// time), big linked title, excerpt, and a footer with the author byline
+// (avatar + name + title) and tag links. Styles live in src/styles/cratis.css
+// so the card treatment stays in one place with the rest of the brand theme.
+import type { StarlightBlogData } from 'starlight-blog/data';
+import { authors as authorRegistry } from '../data/authors.mjs';
+
+interface Props {
+    post: StarlightBlogData['posts'][number];
+}
+
+const { post } = Astro.props;
+
+// starlight-blog's post data carries name/title/url only; pictures come from
+// our own author registry, matched by name.
+const pictureFor = (name: string) =>
+    Object.values(authorRegistry).find((author) => author.name === name)?.picture;
+
+const excerpt = (post.entry.data as { excerpt?: string; description?: string }).excerpt ?? post.entry.data.description;
+const date = post.createdAt.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+const minutes = post.metrics?.readingTime?.minutes ?? 0;
+---
+
+<article class="cratis-post-card">
+    <p class="cratis-post-card-meta">
+        <time datetime={post.createdAt.toISOString().split('T')[0]}>{date}</time>
+        {minutes > 0 && <span class="dot" aria-hidden="true">·</span>}
+        {minutes > 0 && <span>{minutes} min read</span>}
+    </p>
+    <h2 class="cratis-post-card-title">
+        <a href={post.href}>{post.title}</a>
+    </h2>
+    {excerpt && <p class="cratis-post-card-excerpt">{excerpt}</p>}
+    <footer class="cratis-post-card-footer">
+        <div class="cratis-post-card-authors">
+            {
+                post.authors.map((author) => (
+                    <div class="cratis-post-card-author">
+                        {pictureFor(author.name) && (
+                            <img src={pictureFor(author.name)} alt="" width="40" height="40" loading="lazy" />
+                        )}
+                        <div>
+                            <span class="author-name">{author.name}</span>
+                            {author.title && <span class="author-title">{author.title}</span>}
+                        </div>
+                    </div>
+                ))
+            }
+        </div>
+        {
+            post.tags.length > 0 && (
+                <ul class="cratis-post-card-tags">
+                    {post.tags.map((tag) => (
+                        <li>
+                            <a href={tag.href}>{tag.label}</a>
+                        </li>
+                    ))}
+                </ul>
+            )
+        }
+    </footer>
+</article>

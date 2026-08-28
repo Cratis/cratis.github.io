@@ -37,10 +37,19 @@ export default defineConfig({
                 Head: './src/components/Head.astro',
                 // Appends the author signature block below each blog post.
                 Footer: './src/components/Footer.astro',
+                // Editorial masthead: logo + Blog/cratis.io links + social icons.
+                Header: './src/components/Header.astro',
+                // Renders the blog landing as a hero + large post cards;
+                // delegates everything else to starlight-blog's override.
+                MarkdownContent: './src/components/MarkdownContent.astro',
             },
+            // Strips the remaining docs chrome (sidebar, ToC, docs pagination)
+            // from every route — this site is a blog, not a docs site.
+            routeMiddleware: './src/routeData.ts',
             favicon: '/favicon.ico',
             customCss: ['./src/styles/cratis.css'],
-            tableOfContents: { minHeadingLevel: 2, maxHeadingLevel: 2 },
+            tableOfContents: false,
+            pagefind: false,
             // Same code-block look as cratis.io: vivid dark + soft light theme.
             expressiveCode: {
                 themes: ['laserwave', 'slack-ochin'],
@@ -49,17 +58,19 @@ export default defineConfig({
             social: [
                 { icon: 'github', label: 'GitHub', href: 'https://github.com/cratis' },
                 { icon: 'discord', label: 'Discord', href: 'https://discord.gg/kt4AMpV8WV' },
-                { icon: 'youtube', label: 'YouTube', href: 'https://www.youtube.com/@CratisStack' },
+                { icon: 'rss', label: 'RSS', href: '/blog/rss.xml' },
             ],
-            editLink: {
-                baseUrl: 'https://github.com/Cratis/cratis.github.io/edit/main/',
-            },
             plugins: [
                 starlightBlog({
                     title: 'Blog',
                     authors: blogAuthors,
                     // RSS is generated at /blog/rss.xml because `site` is set.
                     metrics: { readingTime: true },
+                    // The masthead has its own Blog link; skip the plugin's.
+                    navigation: 'none',
+                    // The landing lists every post as a card, so keep the
+                    // built-in index on a single page (no /blog/2 pagination).
+                    postCount: 100,
                 }),
             ],
         }),
