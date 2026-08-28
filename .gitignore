@@ -1,8 +1,7 @@
-_site
-.sass-cache
-.jekyll-cache
-.jekyll-metadata
-vendor
+# Astro / Node
+node_modules/
+dist/
+.astro/
 
 # Local AI work artifacts (plans, handovers, session notes) — never tracked
 .ai-work/

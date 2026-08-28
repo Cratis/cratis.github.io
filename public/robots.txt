@@ -1,0 +1,7 @@
+# blog.cratis.io — the Cratis blog.
+# All crawlers are welcome, including AI crawlers and assistants.
+
+User-agent: *
+Allow: /
+
+Sitemap: https://blog.cratis.io/sitemap-index.xml

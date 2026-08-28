@@ -1,0 +1,269 @@
+/* Cratis brand theme for the blog (blog.cratis.io).
+   Mirrors the visual identity of cratis.io — adapted from
+   Documentation/web/src/styles/cratis.css (fonts, accent palette, cards,
+   code chips, tables, selection, header, sidebar links).
+
+   Custom CSS is unlayered, so these rules win over Starlight's `@layer starlight.core`
+   defaults without needing `!important`. */
+
+/* Metric-compatible fallback fonts (the next/font technique). Inter and
+   JetBrains Mono load with `font-display: swap`, so pages first paint in a
+   system font and then *reflow* when the brand font arrives — that reflow is
+   the "renders then jumps" layout shift on navigation. These fallbacks are a
+   local system font re-scaled (size-adjust + ascent/descent overrides) to
+   occupy the SAME space the brand font will, so the swap causes no shift. */
+@font-face {
+    font-family: 'Inter Fallback';
+    src: local('Arial');
+    ascent-override: 90.44%;
+    descent-override: 22.52%;
+    line-gap-override: 0%;
+    size-adjust: 107.12%;
+}
+@font-face {
+    font-family: 'JetBrains Mono Fallback';
+    src: local('Menlo'), local('Consolas'), local('monospace');
+    ascent-override: 75%;
+    descent-override: 20%;
+    line-gap-override: 0%;
+    size-adjust: 105%;
+}
+
+:root {
+    /* Brand fonts — Inter for UI/prose, JetBrains Mono for code. The
+       metric-matched fallback sits between the brand font and Starlight's
+       appended system stack so first paint and the swap occupy one footprint. */
+    --sl-font: 'Inter Variable', 'Inter Fallback';
+    --sl-font-mono: 'JetBrains Mono Variable', 'JetBrains Mono Fallback';
+
+    /* Dark theme (Starlight default) */
+    --sl-color-accent-low: #14224a;
+    --sl-color-accent: #3b6fed;
+    --sl-color-accent-high: #c3d4fb;
+
+    /* A slightly more generous reading measure now that the ToC band is slim. */
+    --sl-content-width: 48rem;
+
+    --cratis-stage-grid: color-mix(in srgb, var(--sl-color-accent) 8%, transparent);
+}
+
+/* Headings: Inter looks best slightly tightened and confident. */
+.sl-markdown-content :is(h1, h2, h3, h4),
+.hero h1 {
+    font-feature-settings: 'cv05' 1, 'ss01' 1; /* friendlier l, single-story a */
+}
+
+:root[data-theme='light'] {
+    --sl-color-accent-low: #dbe5fd;
+    --sl-color-accent: #2150cf;
+    --sl-color-accent-high: #11244f;
+}
+
+/* Thin, unobtrusive scrollbars everywhere — a small touch that makes the
+   whole site feel more crafted. */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--sl-color-gray-5) transparent;
+}
+
+
+/* --- Cards (Starlight CardGrid + LinkCard): subtle depth + lift on hover,
+   matching the SimpleCard treatment so every card surface reads alike --- */
+.card,
+.sl-link-card {
+    border-color: var(--sl-color-gray-5);
+    background:
+        radial-gradient(125% 125% at 100% 0%, color-mix(in srgb, var(--sl-color-accent) 6%, transparent), transparent 52%),
+        color-mix(in srgb, var(--sl-color-gray-6) 55%, var(--sl-color-bg));
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--sl-color-white) 4%, transparent);
+    transition: border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.card:hover,
+.sl-link-card:hover {
+    border-color: var(--sl-color-accent);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px -16px var(--sl-color-accent), inset 0 1px 0 color-mix(in srgb, var(--sl-color-white) 5%, transparent);
+}
+
+.card .icon {
+    color: var(--sl-color-accent);
+}
+
+/* --- Headings: confident rhythm without viewport/font-width tricks --- */
+.sl-markdown-content h2 {
+    letter-spacing: 0;
+    margin-top: 2.5rem;
+}
+
+/* --- Code blocks & asides: a hair more breathing room and softer corners --- */
+.expressive-code {
+    margin-block: 1.25rem;
+}
+.expressive-code .frame .header,
+.expressive-code .frame pre,
+.expressive-code figure {
+    border-radius: 0.5rem;
+}
+/* Lift code blocks off the page so they read as discrete artifacts, the way
+   aspire.dev frames them — a soft, theme-aware drop shadow. */
+.expressive-code figure.frame {
+    box-shadow:
+        0 1px 2px rgb(0 0 0 / 0.16),
+        0 10px 28px -16px rgb(0 0 0 / 0.45);
+}
+.starlight-aside {
+    border-radius: 0.5rem;
+}
+
+/* --- Inline code: a brand-tinted chip instead of the flat gray box ---
+   Following aspire.dev: the surface mixes the surrounding text color (so the
+   chip adapts to its context, including inside asides) with black/white, the
+   text takes the accent, and a hairline accent border frames it. Scoped to
+   :not(pre) so fenced code blocks (expressive-code) are untouched. */
+:root {
+    --cratis-code-bg: color-mix(in srgb, currentColor 20%, #000);
+    --cratis-code-text: var(--sl-color-accent-high);
+    --cratis-code-border: color-mix(in srgb, currentColor 30%, transparent);
+}
+:root[data-theme='light'] {
+    --cratis-code-bg: color-mix(in srgb, currentColor 9%, #fff);
+    --cratis-code-text: var(--sl-color-accent-high);
+    --cratis-code-border: color-mix(in srgb, currentColor 24%, transparent);
+}
+.sl-markdown-content :not(pre) > code:not(:where(.not-content *)) {
+    background-color: var(--cratis-code-bg);
+    color: var(--cratis-code-text);
+    border: 1px solid var(--cratis-code-border);
+    border-radius: 0.3rem;
+}
+/* Inside a link the chip keeps the link color so the affordance stays obvious. */
+.sl-markdown-content a:not(:where(.not-content *)) > code {
+    color: inherit;
+}
+/* Headings already size their own code; don't shrink it. */
+.sl-markdown-content :is(h1, h2, h3, h4) code:not(:where(.not-content *)) {
+    font-size: inherit;
+}
+
+/* --- Tables: a tinted header so they read as designed, not raw markdown --- */
+.sl-markdown-content table thead th {
+    background: color-mix(in srgb, var(--sl-color-accent) 7%, var(--sl-color-gray-6));
+    color: var(--sl-color-white);
+}
+
+/* --- Brand-tinted text selection — a small, crafted detail --- */
+::selection {
+    background: color-mix(in srgb, var(--sl-color-accent) 32%, transparent);
+    color: var(--sl-color-white);
+}
+
+/* --- Steps: brand-accent the numbered markers instead of flat gray --- */
+.sl-steps > li::before {
+    color: var(--sl-color-accent-high);
+    background-color: color-mix(in srgb, var(--sl-color-accent) 18%, var(--sl-color-gray-6));
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--sl-color-accent) 45%, transparent);
+}
+
+/* --- Header: a subtle frosted-glass bar so content scrolls under it
+   cleanly (the modern sticky-header look) --- */
+.header {
+    background: color-mix(in srgb, var(--sl-color-bg-nav) 86%, transparent);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+
+/* Tier 3 — page links: calm, rounded, with room to breathe */
+.sidebar-content a {
+    font-size: var(--sl-text-sm);
+    line-height: 1.35;
+    border-radius: 0.4rem;
+    padding-block: 0.34em;
+    color: var(--sl-color-gray-2);
+    transition: background-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.sidebar-content a:hover,
+.sidebar-content a:focus-visible {
+    background-color: color-mix(in srgb, var(--sl-color-accent) 11%, transparent);
+    color: var(--sl-color-white);
+}
+
+/* Active page — a soft accent pill with a left indicator bar, instead of the
+   heavy fully-filled default. Reads like Linear / VS Code, not a highlighter. */
+.sidebar-content a[aria-current='page'],
+.sidebar-content a[aria-current='page']:hover,
+.sidebar-content a[aria-current='page']:focus {
+    font-weight: 600;
+    color: var(--sl-color-accent-high);
+    background-color: color-mix(in srgb, var(--sl-color-accent) 16%, transparent);
+    box-shadow: inset 0.15rem 0 0 var(--sl-color-accent);
+}
+
+/* Soften the nested-list guide line into a faint accent rail */
+.sidebar-content ul ul li {
+    border-inline-start-color: color-mix(in srgb, var(--sl-color-gray-5) 80%, transparent);
+}
+
+
+/* --- Author signature block (blog posts) ---
+   Rendered by src/components/Footer.astro on individual posts: a byline card
+   that gives each author a personal sign-off below the article. */
+.cratis-signature {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    margin-top: 3rem;
+    padding: 1.15rem 1.25rem;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.5rem;
+    background:
+        radial-gradient(125% 125% at 100% 0%, color-mix(in srgb, var(--sl-color-accent) 6%, transparent), transparent 52%),
+        color-mix(in srgb, var(--sl-color-gray-6) 55%, var(--sl-color-bg));
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--sl-color-white) 4%, transparent);
+}
+
+.cratis-signature + .cratis-signature {
+    margin-top: 0.75rem;
+}
+
+.cratis-signature img {
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: 50%;
+    border: 1px solid color-mix(in srgb, var(--sl-color-accent) 30%, transparent);
+    flex-shrink: 0;
+}
+
+.cratis-signature .signature-name {
+    margin: 0;
+    font-weight: 700;
+    color: var(--sl-color-white);
+    font-size: var(--sl-text-base);
+}
+
+.cratis-signature .signature-name a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.cratis-signature .signature-name a:hover {
+    color: var(--sl-color-accent-high);
+}
+
+.cratis-signature .signature-title {
+    margin: 0;
+    font-size: var(--sl-text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--sl-color-gray-3);
+}
+
+.cratis-signature .signature-text {
+    margin: 0.4rem 0 0;
+    font-size: var(--sl-text-sm);
+    line-height: 1.55;
+    color: var(--sl-color-gray-2);
+    font-style: italic;
+}
