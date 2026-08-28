@@ -13,8 +13,10 @@ const blogAuthors = Object.fromEntries(
 // https://astro.build/config
 export default defineConfig({
     site: 'https://blog.cratis.io',
-    // The blog is the whole site — send the root straight to it.
-    redirects: { '/': '/blog' },
+    // The blog is the whole site — send the root straight to it. The topics
+    // catalogue lives at /topics (see src/pages/topics/index.astro); keep the
+    // intuitive /blog/tags URL working by redirecting it there.
+    redirects: { '/': '/blog', '/blog/tags': '/topics' },
     integrations: [
         starlight({
             title: 'Cratis Blog',

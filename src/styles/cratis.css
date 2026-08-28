@@ -301,6 +301,53 @@
     text-wrap: balance;
 }
 
+/* --- Topics: catalogue of tag pills with post counts --- */
+/* Pills reuse the exact card tag-pill treatment (colors, radius, hover). */
+.cratis-topics {
+    padding-top: 1.5rem;
+}
+
+.cratis-topics ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.cratis-topics a {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.45rem;
+    padding: 0.25rem 0.75rem 0.35rem;
+    border: 1px solid color-mix(in srgb, var(--sl-color-accent) 30%, transparent);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--sl-color-accent) 9%, transparent);
+    color: var(--sl-color-accent-high);
+    font-size: var(--sl-text-sm);
+    text-decoration: none;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.cratis-topics a:hover {
+    border-color: var(--sl-color-accent);
+    background: color-mix(in srgb, var(--sl-color-accent) 16%, transparent);
+}
+
+.cratis-topics .count {
+    font-size: var(--sl-text-xs);
+    font-variant-numeric: tabular-nums;
+    color: color-mix(in srgb, var(--sl-color-accent-high) 65%, transparent);
+}
+
+/* The standalone topics index page needs its own bottom breathing room —
+   on the landing the post list below provides it. */
+.cratis-topics-page .cratis-topics {
+    padding-bottom: 3.5rem;
+}
+
 .cratis-post-list {
     display: flex;
     flex-direction: column;
