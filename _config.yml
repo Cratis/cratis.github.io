@@ -20,9 +20,11 @@
 
 title: Cratis Blog
 email: blog@cratis.io
-description: 
+description: >-
+  The Cratis blog — event sourcing, CQRS, and event modeling with the open-source (MIT)
+  Cratis ecosystem: Chronicle, Arc, Components, and the model-first layer.
 baseurl: "/"
-url: "https://cratis.github.io"
+url: "https://blog.cratis.io"
 twitter_username: einari
 github_username:  jekyll
 
