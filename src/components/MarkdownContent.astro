@@ -1,0 +1,42 @@
+---
+// Override of Starlight's <MarkdownContent>.
+//
+// On the blog landing (and any paginated variant) it replaces the default
+// vertical post list with an editorial layout: a hero ("The Cratis Blog" + a
+// one-line tagline) followed by large post cards. starlight-blog's own route
+// hides the plain "Blog" page title, so the hero heading below is the page's
+// visible <h1>.
+//
+// Everywhere else it delegates to starlight-blog's own MarkdownContent
+// override, which handles post pages (metadata, tags, prev/next links) and
+// falls back to Starlight's default for tag/author archive pages.
+import BlogMarkdownContent from 'starlight-blog/overrides/MarkdownContent.astro';
+
+import PostCard from './PostCard.astro';
+
+const { id } = Astro.locals.starlightRoute;
+const isBlogIndex = id === 'blog' || /^blog\/\d+$/.test(id);
+const posts = isBlogIndex ? Astro.locals.starlightBlog.posts.filter((post) => !post.draft) : [];
+---
+
+{
+    isBlogIndex ? (
+        <div class="cratis-landing not-content">
+            <header class="cratis-hero">
+                <h1>The Cratis Blog</h1>
+                <p>
+                    Essays and engineering notes on event sourcing, CQRS, and building the open-source Cratis stack.
+                </p>
+            </header>
+            <div class="cratis-post-list">
+                {posts.map((post) => (
+                    <PostCard {post} />
+                ))}
+            </div>
+        </div>
+    ) : (
+        <BlogMarkdownContent>
+            <slot />
+        </BlogMarkdownContent>
+    )
+}

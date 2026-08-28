@@ -1,7 +1,9 @@
 /* Cratis brand theme for the blog (blog.cratis.io).
    Mirrors the visual identity of cratis.io — adapted from
    Documentation/web/src/styles/cratis.css (fonts, accent palette, cards,
-   code chips, tables, selection, header, sidebar links).
+   code chips, tables, selection, header) — and layers an editorial magazine
+   look on top: hero + large post cards on the landing, wide readable posts
+   with a prominent byline, and no docs chrome anywhere.
 
    Custom CSS is unlayered, so these rules win over Starlight's `@layer starlight.core`
    defaults without needing `!important`. */
@@ -41,8 +43,9 @@
     --sl-color-accent: #3b6fed;
     --sl-color-accent-high: #c3d4fb;
 
-    /* A slightly more generous reading measure now that the ToC band is slim. */
-    --sl-content-width: 48rem;
+    /* The reading measure: ~70ch of body text now that there is no sidebar
+       and no ToC band — wide enough to feel editorial, narrow enough to read. */
+    --sl-content-width: 46rem;
 
     --cratis-stage-grid: color-mix(in srgb, var(--sl-color-accent) 8%, transparent);
 }
@@ -174,36 +177,318 @@
 }
 
 
-/* Tier 3 — page links: calm, rounded, with room to breathe */
-.sidebar-content a {
-    font-size: var(--sl-text-sm);
-    line-height: 1.35;
-    border-radius: 0.4rem;
-    padding-block: 0.34em;
-    color: var(--sl-color-gray-2);
-    transition: background-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+/* ==========================================================================
+   Editorial layout — no docs chrome
+   ========================================================================== */
+
+/* The sidebar and ToC are removed via route middleware; drop the leftover
+   docs hairline between the title panel and the content panel. */
+.content-panel + .content-panel {
+    border-top: 0;
 }
 
-.sidebar-content a:hover,
-.sidebar-content a:focus-visible {
-    background-color: color-mix(in srgb, var(--sl-color-accent) 11%, transparent);
+/* --- Post pages: magazine article typography --- */
+
+/* Large, confident titles. */
+.content-panel h1 {
+    font-size: clamp(2.1rem, 5vw, 2.9rem);
+    line-height: 1.12;
+    letter-spacing: -0.025em;
+    max-width: 26ch;
+}
+
+/* A slightly larger, airier body for long-form reading. */
+.sl-markdown-content {
+    font-size: 1.0625rem;
+    line-height: 1.75;
+}
+
+/* --- Post byline: date · reading time and the author (avatar + name) as one
+   prominent row directly under the title, closed off with a hairline. --- */
+.sl-blog-metadata {
+    flex-direction: row-reverse; /* authors first, then date · reading time */
+    justify-content: flex-end;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.5rem;
+    margin-top: 1.25rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--sl-color-hairline, var(--sl-color-gray-5));
+}
+
+.sl-blog-metadata-items {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    color: var(--sl-color-gray-3);
+}
+
+.sl-blog-metadata-items time {
+    color: var(--sl-color-gray-2);
+    font-weight: 500;
+}
+
+.sl-blog-metadata-secondary::before {
+    content: '·';
+    margin-inline-end: 0.6rem;
+}
+
+.sl-blog-author-picture {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-color: color-mix(in srgb, var(--sl-color-accent) 35%, transparent);
+}
+
+/* --- Tag pills: brand-tinted, rounded-full --- */
+.sl-blog-tags-label {
+    /* Visually hidden, still announced — the pills speak for themselves. */
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.sl-blog-tag {
+    border-radius: 999px;
+    border-color: color-mix(in srgb, var(--sl-color-accent) 30%, transparent);
+    background: color-mix(in srgb, var(--sl-color-accent) 9%, transparent);
+    color: var(--sl-color-accent-high);
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.sl-blog-tag:hover {
+    border-color: var(--sl-color-accent);
+    background: color-mix(in srgb, var(--sl-color-accent) 16%, transparent);
+}
+
+/* ==========================================================================
+   Blog landing — hero + large post cards
+   ========================================================================== */
+
+/* The landing gets a wider stage than the article measure. */
+.sl-container:has(.cratis-landing) {
+    max-width: 56rem;
+}
+
+.cratis-hero {
+    padding: 2.5rem 0 1rem;
+    text-align: center;
+}
+
+.cratis-hero h1 {
+    margin: 0;
+    font-size: clamp(2.75rem, 8vw, 4.25rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.035em;
+    background: linear-gradient(105deg, var(--sl-color-white) 40%, var(--sl-color-accent-high));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.cratis-hero p {
+    margin: 1rem auto 0;
+    max-width: 38rem;
+    font-size: clamp(1rem, 2.5vw, 1.1875rem);
+    line-height: 1.6;
+    color: var(--sl-color-gray-2);
+    text-wrap: balance;
+}
+
+.cratis-post-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 2rem 0 3.5rem;
+}
+
+.cratis-post-card {
+    position: relative;
+    padding: 1.75rem 2rem 1.5rem;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.75rem;
+    background:
+        radial-gradient(125% 125% at 100% 0%, color-mix(in srgb, var(--sl-color-accent) 6%, transparent), transparent 52%),
+        color-mix(in srgb, var(--sl-color-gray-6) 55%, var(--sl-color-bg));
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--sl-color-white) 4%, transparent);
+    transition: border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.cratis-post-card:hover {
+    border-color: var(--sl-color-accent);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px -16px var(--sl-color-accent), inset 0 1px 0 color-mix(in srgb, var(--sl-color-white) 5%, transparent);
+}
+
+.cratis-post-card-meta {
+    display: flex;
+    gap: 0.55rem;
+    margin: 0;
+    font-size: var(--sl-text-sm);
+    color: var(--sl-color-gray-3);
+}
+
+.cratis-post-card-meta time {
+    color: var(--sl-color-gray-2);
+    font-weight: 500;
+}
+
+.cratis-post-card-title {
+    margin: 0.6rem 0 0;
+    font-size: clamp(1.4rem, 3.5vw, 1.85rem);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+}
+
+.cratis-post-card-title a {
+    color: var(--sl-color-white);
+    text-decoration: none;
+}
+
+/* Stretched link: the whole card is clickable… */
+.cratis-post-card-title a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+}
+
+.cratis-post-card:hover .cratis-post-card-title a {
+    color: var(--sl-color-accent-high);
+}
+
+.cratis-post-card-excerpt {
+    margin: 0.85rem 0 0;
+    font-size: 1.03125rem;
+    line-height: 1.65;
+    color: var(--sl-color-gray-2);
+}
+
+.cratis-post-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.5rem;
+    margin-top: 1.4rem;
+    padding-top: 1.15rem;
+    border-top: 1px solid color-mix(in srgb, var(--sl-color-gray-5) 70%, transparent);
+}
+
+.cratis-post-card-authors {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.5rem;
+}
+
+.cratis-post-card-author {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+}
+
+.cratis-post-card-author img {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    border: 1px solid color-mix(in srgb, var(--sl-color-accent) 35%, transparent);
+}
+
+.cratis-post-card-author .author-name {
+    display: block;
+    font-size: var(--sl-text-sm);
+    font-weight: 600;
     color: var(--sl-color-white);
 }
 
-/* Active page — a soft accent pill with a left indicator bar, instead of the
-   heavy fully-filled default. Reads like Linear / VS Code, not a highlighter. */
-.sidebar-content a[aria-current='page'],
-.sidebar-content a[aria-current='page']:hover,
-.sidebar-content a[aria-current='page']:focus {
-    font-weight: 600;
-    color: var(--sl-color-accent-high);
-    background-color: color-mix(in srgb, var(--sl-color-accent) 16%, transparent);
-    box-shadow: inset 0.15rem 0 0 var(--sl-color-accent);
+.cratis-post-card-author .author-title {
+    display: block;
+    font-size: var(--sl-text-xs);
+    color: var(--sl-color-gray-3);
 }
 
-/* Soften the nested-list guide line into a faint accent rail */
-.sidebar-content ul ul li {
-    border-inline-start-color: color-mix(in srgb, var(--sl-color-gray-5) 80%, transparent);
+/* …while tag links stay independently clickable above the stretched link. */
+.cratis-post-card-tags {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.cratis-post-card-tags a {
+    display: inline-block;
+    padding: 0.25rem 0.75rem 0.35rem;
+    border: 1px solid color-mix(in srgb, var(--sl-color-accent) 30%, transparent);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--sl-color-accent) 9%, transparent);
+    color: var(--sl-color-accent-high);
+    font-size: var(--sl-text-sm);
+    text-decoration: none;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.cratis-post-card-tags a:hover {
+    border-color: var(--sl-color-accent);
+    background: color-mix(in srgb, var(--sl-color-accent) 16%, transparent);
+}
+
+@media (max-width: 40rem) {
+    .cratis-post-card {
+        padding: 1.35rem 1.35rem 1.2rem;
+    }
+}
+
+/* ==========================================================================
+   Tag and author archive pages — card-ified default previews
+   ========================================================================== */
+
+.sl-blog-posts {
+    gap: 1.5rem;
+}
+
+.sl-blog-posts .sl-blog-preview {
+    gap: 0.75rem;
+    padding: 1.5rem 1.75rem;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.75rem;
+    background:
+        radial-gradient(125% 125% at 100% 0%, color-mix(in srgb, var(--sl-color-accent) 6%, transparent), transparent 52%),
+        color-mix(in srgb, var(--sl-color-gray-6) 55%, var(--sl-color-bg));
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--sl-color-white) 4%, transparent);
+    transition: border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.sl-blog-posts .sl-blog-preview:hover {
+    border-color: var(--sl-color-accent);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px -16px var(--sl-color-accent), inset 0 1px 0 color-mix(in srgb, var(--sl-color-white) 5%, transparent);
+}
+
+.sl-blog-posts .sl-blog-preview-link {
+    margin-bottom: 0.75rem;
+}
+
+.sl-blog-posts .sl-blog-preview-title {
+    font-size: clamp(1.3rem, 3vw, 1.6rem);
+    line-height: 1.25;
+    letter-spacing: -0.015em;
+}
+
+/* Archive metadata keeps the compact row look of the landing cards. */
+.sl-blog-posts .sl-blog-metadata {
+    margin-top: 0;
+    padding-bottom: 0;
+    border-bottom: 0;
 }
 
 

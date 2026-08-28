@@ -1,0 +1,88 @@
+---
+// Override of Starlight's <Header> with an editorial blog masthead: logo,
+// a couple of text links (Blog, cratis.io), and the social icons + theme
+// switch. No search, no docs affordances — this is a magazine header.
+import SiteTitle from '@astrojs/starlight/components/SiteTitle.astro';
+import SocialIcons from '@astrojs/starlight/components/SocialIcons.astro';
+import ThemeSelect from '@astrojs/starlight/components/ThemeSelect.astro';
+---
+
+<div class="cratis-header">
+    <div class="title-wrapper sl-flex">
+        <SiteTitle />
+    </div>
+    <nav class="cratis-header-nav" aria-label="Main">
+        <a href="/blog/">Blog</a>
+        <a href="https://cratis.io" rel="noopener">cratis.io</a>
+    </nav>
+    <div class="cratis-header-end print:hidden">
+        <div class="cratis-social-icons">
+            <SocialIcons />
+        </div>
+        <ThemeSelect />
+    </div>
+</div>
+
+<style>
+    .cratis-header {
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+        height: 100%;
+    }
+
+    .title-wrapper {
+        /* Prevent overflow clipping the focus ring around the title link. */
+        overflow: clip;
+        padding: 0.25rem;
+        margin: -0.25rem;
+        min-width: 0;
+    }
+
+    .cratis-header-nav {
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+        border-inline-start: 1px solid var(--sl-color-gray-5);
+        padding-inline-start: 1.25rem;
+    }
+
+    .cratis-header-nav a {
+        color: var(--sl-color-gray-2);
+        font-size: var(--sl-text-sm);
+        font-weight: 500;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: color 0.15s ease;
+    }
+
+    .cratis-header-nav a:hover,
+    .cratis-header-nav a:focus-visible {
+        color: var(--sl-color-white);
+    }
+
+    .cratis-header-end {
+        display: flex;
+        align-items: center;
+        gap: 0.875rem;
+        margin-inline-start: auto;
+    }
+
+    .cratis-social-icons {
+        display: flex;
+        align-items: center;
+        gap: 0.875rem;
+    }
+
+    .cratis-social-icons::after {
+        content: '';
+        height: 1.75rem;
+        border-inline-end: 1px solid var(--sl-color-gray-5);
+    }
+
+    @media (max-width: 37.5rem) {
+        .cratis-header-nav {
+            display: none;
+        }
+    }
+</style>
